@@ -20,12 +20,14 @@ task :copy => ["template"] do
   puts "All files have been put in place"
 end
 
+desc "Soft update: do overwrite, but not remove any files."
 task :update => [:copy] do
   Rake::Task["clean"].invoke
   puts "Done, it was a pleasure working with you. Enjoy the result..."
 end
 
 namespace :update do
+  desc "Remove all template files first, then update"
   task :force => [:'remove_template'] do
     Rake::Task["update"].invoke
   end
