@@ -9,6 +9,7 @@ file "template" =>["master.zip", :'clean:template'] do
   `unzip master.zip`
   `mv jekyll-page-template-master template`
   rm "template/Rakefile", :force=>true
+  rm_r "template/custom", :force=>true
   Rake::Task["clean:template"].reenable
 end
 
