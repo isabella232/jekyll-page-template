@@ -1,6 +1,6 @@
-file "master.zip" => [:'clean:zip'] do
+file "master.zip" do
   puts "Downloading latest version of template"
-  `wget https://github.com/opener-project/jekyll-page-template/archive/master.zip`
+  `wget -N https://github.com/opener-project/jekyll-page-template/archive/master.zip`
   Rake::Task["clean:zip"].reenable
 end
 
@@ -25,9 +25,9 @@ task :copy => ["template"] do
 end
 
 desc "Soft update: do overwrite, but not remove any files."
-task :update => [:copy] do
-  Rake::Task["clean"].invoke
-  puts "Done, it was a pleasure working with you. Enjoy the result..."
+task :update => [:'update:rakefile'] do
+  puts "Diving deep into multiverse mode..."
+  `rake update:no_rakefile`
 end
 
 namespace :update do
@@ -36,9 +36,15 @@ namespace :update do
     Rake::Task["update"].invoke
   end
 
+  desc "Update but skip Rakefile"
+  task :no_rakefile => [:copy] do
+    Rake::Task["clean"].invoke
+    puts "Done, it was a pleasure working with you. Enjoy the result..."
+  end
+
   desc "Get the latest Rakefile from github"
   task :rakefile =>[:unzip_template] do
-    cp "template/Rakefile" "Rakefile", :force=>true
+    cp "template/Rakefile", "Rakefile"
   end
 end
 
