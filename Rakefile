@@ -4,13 +4,17 @@ file "master.zip" => [:'clean:zip'] do
   Rake::Task["clean:zip"].reenable
 end
 
-file "template" =>["master.zip", :'clean:template'] do
-  puts "Expanding latest version of template."
-  `unzip master.zip`
-  `mv jekyll-page-template-master template`
+file "template" =>[:unzip_template] do
   rm "template/Rakefile", :force=>true
   rm_r "template/custom", :force=>true
   Rake::Task["clean:template"].reenable
+  Rake::Task["unzip_template"].reenable
+end
+
+task :unzip_template =>["master.zip", :'clean:template'] do
+  puts "Expanding latest version of template."
+  `unzip master.zip`
+  `mv jekyll-page-template-master template`
 end
 
 task :copy => ["template"] do
@@ -30,6 +34,11 @@ namespace :update do
   desc "Remove all template files first, then update"
   task :force => [:'remove_template'] do
     Rake::Task["update"].invoke
+  end
+
+  desc "Get the latest Rakefile from github"
+  task :rakefile =>[:unzip_template] do
+    cp "template/Rakefile" "Rakefile", :force=>true
   end
 end
 
